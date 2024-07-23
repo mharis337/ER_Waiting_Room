@@ -31,7 +31,6 @@ try {
         $_SESSION['db_initialized'] = true;
     }
 } catch (PDOException $e) {
-    error_log("Database connection error: " . $e->getMessage());
     echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . $e->getMessage()]);
     exit();
 }

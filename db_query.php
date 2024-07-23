@@ -1,6 +1,4 @@
 <?php
-// Include database configuration
-
 function fetchQueueData($conn)
 {
     if (!$conn) {
@@ -117,7 +115,6 @@ function addToQueue($conn, $input)
     } catch (Exception $e) {
         // Rollback the transaction if something failed
         $conn->rollBack();
-        error_log("Transaction error: " . $e->getMessage());
         return ['success' => false, 'error' => $e->getMessage()];
     }
 }
@@ -125,8 +122,6 @@ function addToQueue($conn, $input)
 
 function check_wait_time($conn, $name, $code)
 {
-    error_log("Check wait time called with Name: $name, Code: $code");
-
     try {
         $stmt = $conn->prepare("SELECT wait_time FROM queue WHERE name = :name AND code = :code");
 
@@ -135,14 +130,12 @@ function check_wait_time($conn, $name, $code)
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        error_log("Database Query Result: " . print_r($user, true));
         if ($user) {
             return ['success' => true, 'waitTime' => $user['wait_time']];
         } else {
             return ['success' => false, 'error' => 'User not found or invalid code.'];
         }
     } catch (PDOException $e) {
-        error_log("Database Query Failed: " . $e->getMessage());
         return ['success' => false, 'error' => 'Query failed.'];
     }
 }
